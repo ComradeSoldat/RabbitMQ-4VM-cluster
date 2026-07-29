@@ -1,0 +1,45 @@
+---
+- name: Read cookie
+  slurp:
+    src: "{{ rabbitmq_cookie_path }}"
+  register: rabbitmq_cookie_raw
+  when: ansible_facts['hostname'] in groups['master_host']
+
+- name: Save cookie
+  set_fact:
+    rabbitmq_cookie_value: "{{ rabbitmq_cookie_raw.content | b64decode }}"
+  when: ansible_facts['hostname'] in groups['master_host']
+
+- name: Share cookie
+  set_fact:
+    rabbitmq_cookie_value: "{{ hostvars[groups['master_host'][0]]['rabbitmq_cookie_raw']['content'] | b64decode }}"
+
+- name: Write cookie
+  copy:
+    content: "{{ rabbitmq_cookie_value }}"
+    dest: "{{ rabbitmq_cookie_path }}"
+    owner: rabbitmq
+    group: rabbitmq
+    mode: "0400"
+
+- name: BLOCK
+  block:
+
+    - name: Stop non-master app
+      command: rabbitmqctl stop_app
+
+    - name: Rest non-master
+      command: rabbitmqctl reset
+
+    - name: Join cluster
+      command: "rabbitmqctl join_cluster rabbit@{{ hostvars[groups['master_host'] | first]['ansible_facts']['hostname'] }}"
+
+    - name: Start non-master
+      command: rabbitmqctl start_app
+  when: inventory_hostname not in groups['master_host']
+
+- name: Check cluster status
+  command: rabbitmqctl cluster_status
+  register: cluster_status
+  changed_when: false
+  

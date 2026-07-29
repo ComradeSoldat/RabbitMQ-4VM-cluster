@@ -1,0 +1,8 @@
+---
+- name: Install and configure RabbitMQ and join create cluster
+  hosts: rabbitmq_group, master_host
+  become: true
+  gather_facts: true 
+  roles:
+    - rabbitmq
+    

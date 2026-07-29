@@ -1,0 +1,7 @@
+---
+rabbitmq_user_name: "admin"
+rabbitmq_user_password: "123456"
+rabbitmq_vhost: "/"
+rabbitmq_tags: "administrator"
+rabbitmq_service: rabbitmq-server
+rabbitmq_cookie_path: /var/lib/rabbitmq/.erlang.cookie

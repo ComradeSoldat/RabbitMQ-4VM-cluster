@@ -1,0 +1,6 @@
+---
+- name: Restart RabbitMQ
+  systemd:
+    name: "{{ rabbitmq_service }}"
+    state: restarted
+    daemon_reload: true

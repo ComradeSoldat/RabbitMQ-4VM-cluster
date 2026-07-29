@@ -1,0 +1,6 @@
+---
+- name: Install RabbitMQ and configure
+  import_tasks: install_rabbitmq.yml
+
+- name: Create RabbitMQ cluster
+  import_tasks: join_cluster.yml
