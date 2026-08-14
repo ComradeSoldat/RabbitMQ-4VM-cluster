@@ -4,6 +4,6 @@
 
 - name: Create RabbitMQ cluster
   import_tasks: join_cluster.yml
-  when: rabbitmq_mode == cluster
+  when: rabbitmq_mode == 'cluster'
   tags:
     - join_cluster
